@@ -1,12 +1,13 @@
 def predictionModel(n_days, stock_code):
     """
-    Predict stock prices for the next `n_days` using SVR and return a Plotly figure.
+    Predict stock prices for the next n_days using SVR and return a Plotly figure along with accuracy metrics.
     """
     # Importing libraries
     import yfinance as yf
     import plotly.graph_objects as go
     from sklearn.model_selection import train_test_split, GridSearchCV
     from sklearn.svm import SVR
+    from sklearn.metrics import mean_absolute_error, mean_squared_error
     from datetime import date, timedelta
     import numpy as np
 
@@ -47,6 +48,13 @@ def predictionModel(n_days, stock_code):
         svr_model = SVR(kernel="rbf", **best_params)
         svr_model.fit(X_train, y_train)
 
+        # Test the model on the test set
+        y_pred_test = svr_model.predict(X_test)
+
+        # Calculate accuracy metrics
+        mae = mean_absolute_error(y_test, y_pred_test)
+        rmse = mean_squared_error(y_test, y_pred_test, squared=False)
+
         # Prepare future dates for prediction
         last_day_index = X[-1][0]  # Last day in the training data
         future_days = np.arange(last_day_index + 1, last_day_index + 1 + n_days).reshape(-1, 1)
@@ -80,9 +88,13 @@ def predictionModel(n_days, stock_code):
             template="plotly_white"
         )
 
+        # Print accuracy metrics
+        print(f"Model Accuracy Metrics:")
+        print(f"Mean Absolute Error (MAE): {mae:.2f}")
+        print(f"Root Mean Squared Error (RMSE): {rmse:.2f}")
+
         return fig
 
     except Exception as e:
         print(f"Error in predictionModel: {e}")
         return go.Figure().update_layout(title="Error generating prediction.")
-

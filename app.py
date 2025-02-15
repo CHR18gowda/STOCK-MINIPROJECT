@@ -299,7 +299,7 @@ def analyze_and_visualize_forecast(stock_code, n_days):
     buy_date_str = today.strftime('%m-%d')
 
     results = []
-    for year in range(2011, 2024):
+    for year in range(2011, 2025):
         try:
             buy_date = dt.strptime(f"{year}-{buy_date_str}", "%Y-%m-%d")
             sell_date = buy_date + timedelta(days=n_days)
